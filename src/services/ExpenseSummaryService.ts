@@ -1,23 +1,24 @@
 import axios from 'axios';
+import ExpenseSummary from '../domain/entities/ExpenseSummary';
 
-export function getExpenseSummary() {
-    axios({
+export async function getExpenseSummary(): Promise<ExpenseSummary[]> {
+    const response = await axios({
         method: 'get',
         url: 'http://localhost:9000/expense/summary',
         responseType: "json"
     })
-    .then(function (response) {
-        console.log(response)
+        
+    return (response.data as Array<any>).map(it => {
+        return {
+            id: it.id,
+            transactionDate: it.transactionDate,
+            transactionAmount: it.transactionAmount,
+            vendorId: it.vendorId,
+            vendorName: it.vendorName,
+            expenseCategoryId: it.expenseCategoryId,
+            expenseCategoryName: it.expenseCategoryName,
+            notes: it.notes,
+            hide: it.hide
+        } as ExpenseSummary
     });
-    // axios.get('http:localhost:9000/expense/summary')
-    //   .then(function (response) {
-    //     console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   })
-    //   .then(function () {
-    //     // always executed
-    //     console.log("I'm always executed!")
-    //   });  
 }

@@ -1,14 +1,13 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import { getExpenseSummary } from './services/ExpenseSummaryService';
+import ExpenseSummaryGrid from './grids/expensesummary/ExpenseSummaryGrid';
 
 const App: React.FC = () => {
 
-  const foo = getExpenseSummary()
-
   return (
     <div className="App">
-      <h1>Expenses</h1>
+      <h1>Expense Summary</h1>
+      <ExpenseSummaryGrid />
     </div>
   )
 }
