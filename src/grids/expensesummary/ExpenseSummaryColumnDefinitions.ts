@@ -14,6 +14,7 @@ export const ExpenseCategoryColumnDefinitions: ColDef[] = [
     headerName: "Date",
     field: ExpenseSummaryColumnFields.TRANSACTION_DATE,
     maxWidth: 120,
+    resizable: false
   },
   {
     headerName: "Transaction Amount",
@@ -24,12 +25,12 @@ export const ExpenseCategoryColumnDefinitions: ColDef[] = [
   {
     headerName: "Vendor",
     field: ExpenseSummaryColumnFields.VENDOR,
-    maxWidth: 340
+    maxWidth: 360
   },
   {
     headerName: "Expese Category",
     field: ExpenseSummaryColumnFields.EXPENSE_CATEGORY,
-    maxWidth: 340
+    maxWidth: 360
   },
   {
     headerName: "Notes",

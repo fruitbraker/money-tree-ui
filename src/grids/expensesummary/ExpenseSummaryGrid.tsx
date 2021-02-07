@@ -6,17 +6,19 @@ import { getExpenseSummary } from "../../services/ExpenseSummaryService"
 import { DefaultColumnDefinition, ExpenseCategoryColumnDefinitions } from "./ExpenseSummaryColumnDefinitions"
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import { CircularProgress, Drawer, IconButton } from "@material-ui/core"
 
 const ExpenseSummaryGrid: React.FC = () => {
   let columnApi: ColumnApi
 
   const [expenseSummary, setExpenseSummary] = useState<ExpenseSummary[]>([])
-  const [selectedExpenseSummary, setSelectedExpenseSummary] = useState<ExpenseSummary[]>([])
+  const [isLoading, setIsloading] = useState<boolean>(true)
 
   useEffect(() => {
     getExpenseSummary()
     .then(expenseSummaries => {
       setExpenseSummary(expenseSummaries)
+      setIsloading(false)
     })
   }, [])
 
@@ -28,22 +30,23 @@ const ExpenseSummaryGrid: React.FC = () => {
 
   return (
     <div>
-      <div className="ag-theme-alpine grid" >
+      {
+        isLoading && <CircularProgress />
+      }
+      {
+        !isLoading &&
+        <div className="ag-theme-alpine grid" >
         <AgGridReact
           columnDefs={ExpenseCategoryColumnDefinitions}
           defaultColDef={DefaultColumnDefinition}
           onGridReady={onGridReady}
-          onSelectionChanged={(event: SelectionChangedEvent) => {
-            setSelectedExpenseSummary(event.api.getSelectedRows())
-          }}
           rowData={expenseSummary}
           rowHeight={50}
-          rowSelection={"multiple"}
-          rowMultiSelectWithClick={true}
           pagination={true}
           paginationAutoPageSize={true}
         />
       </div>
+      }
     </div>
   )
 }
