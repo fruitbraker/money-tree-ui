@@ -1,14 +1,13 @@
 import React from 'react';
 import './App.css';
-import ExpenseSummaryGrid from './grids/expensesummary/ExpenseSummaryGrid';
+import Dashboard from './components/Dashboard';
 
 const App: React.FC = () => {
 
   return (
-    <div className="App">
-      <h1>Expense Summary</h1>
-      <ExpenseSummaryGrid />
-    </div>
+    <>
+      <Dashboard />
+    </>
   )
 }
 
