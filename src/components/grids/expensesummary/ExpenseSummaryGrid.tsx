@@ -6,7 +6,8 @@ import { getExpenseSummary } from "../../../services/ExpenseSummaryService"
 import { DefaultColumnDefinition, ExpenseCategoryColumnDefinitions } from "./ExpenseSummaryColumnDefinitions"
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import { CircularProgress } from "@material-ui/core"
+import { Button, ButtonBase, CircularProgress, IconButton } from "@material-ui/core"
+import AddIcon from '@material-ui/icons/Add';
 
 const ExpenseSummaryGrid: React.FC = () => {
   let columnApi: ColumnApi
@@ -16,10 +17,10 @@ const ExpenseSummaryGrid: React.FC = () => {
 
   useEffect(() => {
     getExpenseSummary()
-    .then(expenseSummaries => {
-      setExpenseSummary(expenseSummaries)
-      setIsloading(false)
-    })
+      .then(expenseSummaries => {
+        setExpenseSummary(expenseSummaries)
+        setIsloading(false)
+      })
   }, [])
 
   const onGridReady = (e: GridReadyEvent) => {
@@ -35,17 +36,31 @@ const ExpenseSummaryGrid: React.FC = () => {
       }
       {
         !isLoading &&
-        <div className="ag-theme-alpine grid" >
-          <AgGridReact
-            columnDefs={ExpenseCategoryColumnDefinitions}
-            defaultColDef={DefaultColumnDefinition}
-            onGridReady={onGridReady}
-            rowData={expenseSummary}
-            rowHeight={50}
-            pagination={true}
-            paginationAutoPageSize={true}
-          />
-      </div>
+        <div>
+          <div className="ag-theme-alpine grid" >
+            <AgGridReact
+              columnDefs={ExpenseCategoryColumnDefinitions}
+              defaultColDef={DefaultColumnDefinition}
+              onGridReady={onGridReady}
+              rowData={expenseSummary}
+              rowHeight={50}
+              pagination={true}
+              paginationAutoPageSize={true}
+            />
+          </div>
+          <div style={{
+            paddingTop: 10,
+            textAlign: "right"
+          }}>  
+            <Button
+              variant="contained"
+              color="primary"
+              endIcon={<AddIcon />}
+            >
+              ADD NEW
+            </Button>
+          </div>
+        </div>
       }
     </div>
   )
