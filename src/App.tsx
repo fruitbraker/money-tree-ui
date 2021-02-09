@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-import Dashboard from './components/Dashboard';
+import NavigationDrawer from './components/NavigationDrawer';
 
 const App: React.FC = () => {
 
   return (
     <>
-      <Dashboard />
+      <NavigationDrawer />
     </>
   )
 }
