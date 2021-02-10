@@ -75,7 +75,7 @@ const NavigationDrawer: React.FC = () => {
         </div>
         <Divider />
         <List>
-          <ListItem 
+          <ListItem
             button
             onClick={() => {
               setDrawerSelectedTab({
@@ -93,7 +93,7 @@ const NavigationDrawer: React.FC = () => {
             </ListItemIcon>
             <ListItemText primary={DrawerTabs.dashboard} />
           </ListItem>
-          <ListItem 
+          <ListItem
             button
             onClick={() => {
               setDrawerSelectedTab({
@@ -111,7 +111,7 @@ const NavigationDrawer: React.FC = () => {
             </ListItemIcon>
             <ListItemText primary={DrawerTabs.expenseSummary} />
           </ListItem>
-          <ListItem 
+          <ListItem
             button
             onClick={() => {
               setDrawerSelectedTab({
@@ -129,7 +129,7 @@ const NavigationDrawer: React.FC = () => {
             </ListItemIcon>
             <ListItemText primary={DrawerTabs.incomeSummary} />
           </ListItem>
-          <ListItem 
+          <ListItem
             button
             onClick={() => {
               setDrawerSelectedTab({
@@ -150,7 +150,7 @@ const NavigationDrawer: React.FC = () => {
         </List>
         <Divider />
         <List>
-        <ListItem 
+          <ListItem
             button
             onClick={() => {
               setDrawerSelectedTab({
@@ -186,7 +186,7 @@ const NavigationDrawer: React.FC = () => {
             drawerSelectedTab.vendor && <VendorGrid />
           }
           {
-            drawerSelectedTab.categories && 
+            drawerSelectedTab.categories &&
             <div>
               <Grid container spacing={1}>
                 <Grid item xs={6}>
@@ -213,7 +213,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
+    paddingRight: 24, // keep right padding when drawer closed 
+    minHeight: 64
   },
   toolbarIcon: {
     display: 'flex',
@@ -281,8 +282,5 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
+  }
 }));

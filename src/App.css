@@ -8,7 +8,7 @@
 }
 
 .grid {
-  height: 800px;
+  height: calc(100vh - 180px);
   width: fill
 }
 

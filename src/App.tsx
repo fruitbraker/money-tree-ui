@@ -5,9 +5,7 @@ import NavigationDrawer from './components/NavigationDrawer';
 const App: React.FC = () => {
 
   return (
-    <>
-      <NavigationDrawer />
-    </>
+    <NavigationDrawer />
   )
 }
 
