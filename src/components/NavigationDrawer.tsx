@@ -1,4 +1,4 @@
-import { AppBar, Container, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Container, CssBaseline, Divider, Drawer, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles, Toolbar, Typography } from "@material-ui/core";
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -11,6 +11,8 @@ import { AccountBalance, CreditCard } from "@material-ui/icons";
 import IncomeSummaryGrid from "./grids/incomesummary/IncomeSummaryGrid";
 import VendorGrid from "./grids/vendor/VendorGrid";
 import Dashboard from "./grids/dashboard/Dashboard";
+import ExpenseCategoryGrid from "./grids/categories/expense/ExpenseCategoryGrid";
+import IncomeCategoryGrid from "./grids/categories/income/IncomeCategoryGrid";
 
 const NavigationDrawer: React.FC = () => {
 
@@ -19,7 +21,7 @@ const NavigationDrawer: React.FC = () => {
     expenseSummary = "Expense Summary",
     incomeSummary = "Income Summary",
     vendors = "Vendors",
-    categories = "Categories"
+    categories = "Expense/Income Categories"
   }
 
   const classes = useStyles();
@@ -89,7 +91,7 @@ const NavigationDrawer: React.FC = () => {
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
-            <ListItemText primary="Dashboard" />
+            <ListItemText primary={DrawerTabs.dashboard} />
           </ListItem>
           <ListItem 
             button
@@ -107,7 +109,7 @@ const NavigationDrawer: React.FC = () => {
             <ListItemIcon>
               <CreditCard />
             </ListItemIcon>
-            <ListItemText primary="Expense Summary" />
+            <ListItemText primary={DrawerTabs.expenseSummary} />
           </ListItem>
           <ListItem 
             button
@@ -125,7 +127,7 @@ const NavigationDrawer: React.FC = () => {
             <ListItemIcon>
               <AccountBalance />
             </ListItemIcon>
-            <ListItemText primary="Income Summary" />
+            <ListItemText primary={DrawerTabs.incomeSummary} />
           </ListItem>
           <ListItem 
             button
@@ -143,7 +145,7 @@ const NavigationDrawer: React.FC = () => {
             <ListItemIcon>
               <PeopleIcon />
             </ListItemIcon>
-            <ListItemText primary="Vendors" />
+            <ListItemText primary={DrawerTabs.vendors} />
           </ListItem>
         </List>
         <Divider />
@@ -164,7 +166,7 @@ const NavigationDrawer: React.FC = () => {
             <ListItemIcon>
               <ListIcon />
             </ListItemIcon>
-            <ListItemText primary="Categories" />
+            <ListItemText primary={DrawerTabs.categories} />
           </ListItem>
         </List>
       </Drawer>
@@ -183,6 +185,19 @@ const NavigationDrawer: React.FC = () => {
           {
             drawerSelectedTab.vendor && <VendorGrid />
           }
+          {
+            drawerSelectedTab.categories && 
+            <div>
+              <Grid container spacing={1}>
+                <Grid item xs={6}>
+                  <ExpenseCategoryGrid />
+                </Grid>
+                <Grid item xs={6}>
+                  <IncomeCategoryGrid />
+                </Grid>
+              </Grid>
+            </div>
+          }
         </Container>
       </main>
     </div>
@@ -191,7 +206,7 @@ const NavigationDrawer: React.FC = () => {
 
 export default NavigationDrawer
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
   root: {
