@@ -9,7 +9,7 @@ export enum ExpenseSummaryColumnFields {
   hide = "hide"
 }
 
-export const ExpenseCategoryColumnDefinitions: ColDef[] = [
+export const ExpenseSummaryColumnDefinitions: ColDef[] = [
   {
     headerName: "Date",
     field: ExpenseSummaryColumnFields.TRANSACTION_DATE,
@@ -38,7 +38,7 @@ export const ExpenseCategoryColumnDefinitions: ColDef[] = [
   },
 ]
 
-export const DefaultColumnDefinition: ColDef = {
+export const ExpenseSummaryDefaultColumnDefinition: ColDef = {
   cellStyle: { textAlign: 'left' },
   sortable: true,
   filter: true,
