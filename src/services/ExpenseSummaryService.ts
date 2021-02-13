@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ExpenseSummary } from '../domain/entities/Expense';
+import { ExpenseSummary, Expense } from '../domain/entities/Expense';
 
 export async function getExpenseSummary(): Promise<ExpenseSummary[]> {
     const response = await axios({
@@ -21,4 +21,16 @@ export async function getExpenseSummary(): Promise<ExpenseSummary[]> {
             hide: it.hide
         } as ExpenseSummary
     });
+}
+
+export async function postExpense(newExpense: Expense): Promise<boolean> {
+    const response = await axios({
+        method: 'post',
+        url: 'http://localhost:9000/expense',
+        data: newExpense
+    })
+
+    console.log(response)
+
+    return false
 }

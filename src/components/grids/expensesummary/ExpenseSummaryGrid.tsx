@@ -1,12 +1,12 @@
 import { ColumnApi, GridReadyEvent } from "ag-grid-community"
 import { AgGridReact } from "ag-grid-react"
 import React, { useEffect, useState } from "react"
-import { ExpenseSummary, NewExpense } from "../../../domain/entities/Expense"
-import { getExpenseSummary } from "../../../services/ExpenseSummaryService"
+import { ExpenseSummary, Expense } from "../../../domain/entities/Expense"
+import { getExpenseSummary, postExpense } from "../../../services/ExpenseSummaryService"
 import { ExpenseSummaryDefaultColumnDefinition, ExpenseSummaryColumnDefinitions } from "./ExpenseSummaryColumnDefinitions"
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from "@material-ui/core"
+import { Button, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, TextField } from "@material-ui/core"
 import AddIcon from '@material-ui/icons/Add';
 import Vendor from "../../../domain/entities/Vendor"
 import { getVendor } from "../../../services/VendorService"
@@ -23,7 +23,7 @@ const ExpenseSummaryGrid: React.FC = () => {
   const [isLoading, setIsloading] = useState<boolean>(true)
 
   const [addNewExpenseSummaryDialog, setAddNewExpenseSummaryDialog] = useState<boolean>(false)
-  const [newExpense, setNewExpense] = useState<NewExpense>({
+  const [newExpense, setNewExpense] = useState<Expense>({
     id: undefined,
     transactionDate: "",
     transactionAmount: 0.00,
@@ -149,13 +149,23 @@ const ExpenseSummaryGrid: React.FC = () => {
                   }
                 }}
               />
+              <FormControlLabel
+                value="Hide"
+                control={<Checkbox color="primary" />}
+                label="Hide"
+                labelPlacement="end"
+                onChange={(event: any) => {
+                  setNewExpense({ ...newExpense, hide: event.target.checked })
+                }}
+              />
             </DialogContent>
             <DialogActions>
               <Button
-                onClick={() => { 
+                onClick={() => {
                   console.log(newExpense)
+                  postExpense(newExpense)
                   setAddNewExpenseSummaryDialog(false)
-                 }}
+                }}
                 color="primary"
               >
                 Submit
@@ -180,7 +190,7 @@ const ExpenseSummaryGrid: React.FC = () => {
             <Button
               variant="contained"
               color="primary"
-              endIcon={<AddIcon />}
+              startIcon={<AddIcon />}
               onClick={() => { setAddNewExpenseSummaryDialog(true) }}
             >
               ADD NEW
