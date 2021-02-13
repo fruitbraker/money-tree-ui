@@ -1,5 +1,5 @@
 import axios from 'axios';
-import ExpenseSummary from '../domain/entities/ExpenseSummary';
+import { ExpenseSummary } from '../domain/entities/Expense';
 
 export async function getExpenseSummary(): Promise<ExpenseSummary[]> {
     const response = await axios({

@@ -1,12 +1,12 @@
 import { ColumnApi, GridReadyEvent } from "ag-grid-community"
 import { AgGridReact } from "ag-grid-react"
 import React, { useEffect, useState } from "react"
-import ExpenseSummary from "../../../domain/entities/ExpenseSummary"
+import { ExpenseSummary, NewExpense } from "../../../domain/entities/Expense"
 import { getExpenseSummary } from "../../../services/ExpenseSummaryService"
 import { ExpenseSummaryDefaultColumnDefinition, ExpenseSummaryColumnDefinitions } from "./ExpenseSummaryColumnDefinitions"
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import { Button, CircularProgress, createStyles, Dialog, DialogActions, DialogContent, DialogTitle, Grid, makeStyles, TextField, Theme } from "@material-ui/core"
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from "@material-ui/core"
 import AddIcon from '@material-ui/icons/Add';
 import Vendor from "../../../domain/entities/Vendor"
 import { getVendor } from "../../../services/VendorService"
@@ -23,6 +23,15 @@ const ExpenseSummaryGrid: React.FC = () => {
   const [isLoading, setIsloading] = useState<boolean>(true)
 
   const [addNewExpenseSummaryDialog, setAddNewExpenseSummaryDialog] = useState<boolean>(false)
+  const [newExpense, setNewExpense] = useState<NewExpense>({
+    id: undefined,
+    transactionDate: "",
+    transactionAmount: 0.00,
+    vendor: "",
+    expenseCategory: "",
+    notes: "",
+    hide: false
+  })
 
   useEffect(() => {
     getExpenseSummary()
@@ -73,6 +82,13 @@ const ExpenseSummaryGrid: React.FC = () => {
                     placeholder="YYYY-MM-DD"
                     margin="dense"
                     label="Transaction Date"
+                    onChange={(event) => {
+                      if (event.target.value) {
+                        setNewExpense({ ...newExpense, transactionDate: event.target.value })
+                      } else {
+                        setNewExpense({ ...newExpense, transactionDate: "" })
+                      }
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -80,6 +96,13 @@ const ExpenseSummaryGrid: React.FC = () => {
                     required
                     margin="dense"
                     label="Transaction Amount"
+                    onChange={(event) => {
+                      if (event.target.value) {
+                        setNewExpense({ ...newExpense, transactionAmount: Number(event.target.value) })
+                      } else {
+                        setNewExpense({ ...newExpense, transactionAmount: 0 })
+                      }
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -90,7 +113,12 @@ const ExpenseSummaryGrid: React.FC = () => {
                 renderInput={(params) => <TextField {...params} label="Vendor" margin="dense" />}
                 clearOnEscape
                 onChange={(event, value, reason) => {
-                  console.log("value", value)
+                  var vendor = value as Vendor | null
+                  if (vendor) {
+                    setNewExpense({ ...newExpense, vendor: vendor.id })
+                  } else {
+                    setNewExpense({ ...newExpense, vendor: "" })
+                  }
                 }}
               />
               <Autocomplete
@@ -99,11 +127,35 @@ const ExpenseSummaryGrid: React.FC = () => {
                 getOptionLabel={(it) => it.name}
                 renderInput={(params) => <TextField {...params} label="Expense Category" margin="dense" />}
                 clearOnEscape
+                onChange={(event, value, reason) => {
+                  var expenseCategory = value as ExpenseCategory | null
+                  if (expenseCategory) {
+                    setNewExpense({ ...newExpense, expenseCategory: expenseCategory.id })
+                  } else {
+                    setNewExpense({ ...newExpense, expenseCategory: "" })
+                  }
+                }}
+              />
+              <TextField
+                margin="dense"
+                label="Notes"
+                fullWidth
+                multiline
+                onChange={(event) => {
+                  if (event.target.value) {
+                    setNewExpense({ ...newExpense, notes: event.target.value })
+                  } else {
+                    setNewExpense({ ...newExpense, notes: "" })
+                  }
+                }}
               />
             </DialogContent>
             <DialogActions>
               <Button
-                onClick={() => { setAddNewExpenseSummaryDialog(false) }}
+                onClick={() => { 
+                  console.log(newExpense)
+                  setAddNewExpenseSummaryDialog(false)
+                 }}
                 color="primary"
               >
                 Submit
