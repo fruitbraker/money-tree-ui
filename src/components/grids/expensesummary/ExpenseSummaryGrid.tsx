@@ -13,14 +13,23 @@ import { getVendor } from "../../../services/VendorService"
 import { Autocomplete } from "@material-ui/lab"
 import { ExpenseCategory } from "../../../domain/entities/Category"
 import { getExpenseCategory } from "../../../services/CategoryService"
+import { validateDate, validateNumber } from "../../../domain/Validator"
 
 const ExpenseSummaryGrid: React.FC = () => {
   let columnApi: ColumnApi
+
+  interface NewExpenseValid {
+    transactionDate: boolean,
+    transactionAmount: boolean,
+    vendor: boolean,
+    expenseCategory: boolean
+  }
 
   const [expenseSummary, setExpenseSummary] = useState<ExpenseSummary[]>([])
   const [vendor, setVendor] = useState<Vendor[]>([])
   const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory[]>([])
   const [isLoading, setIsloading] = useState<boolean>(true)
+  const [isBusy, setIsBusy] = useState<boolean>(false)
 
   const [addNewExpenseSummaryDialog, setAddNewExpenseSummaryDialog] = useState<boolean>(false)
   const [newExpense, setNewExpense] = useState<Expense>({
@@ -32,12 +41,15 @@ const ExpenseSummaryGrid: React.FC = () => {
     notes: "",
     hide: false
   })
+  const [newExpenseValid, setNewExpenseValid] = useState<NewExpenseValid>({
+    transactionDate: false,
+    transactionAmount: false,
+    vendor: false,
+    expenseCategory: false
+  })
 
   useEffect(() => {
-    getExpenseSummary()
-      .then(expenseSummaries => {
-        setExpenseSummary(expenseSummaries)
-      })
+    loadExpenseSummary()
     getVendor()
       .then(vendors => {
         setVendor(vendors)
@@ -53,6 +65,34 @@ const ExpenseSummaryGrid: React.FC = () => {
     columnApi = e.columnApi
     columnApi.autoSizeAllColumns()
     e.api.sizeColumnsToFit()
+  }
+
+  const handleNewExpenseSubmit = async () => {
+    setIsBusy(true)
+    postExpense(newExpense).then((result) => {
+      if (result) {
+        loadExpenseSummary()
+        setAddNewExpenseSummaryDialog(false)
+        setIsBusy(false)
+        console.log("success")
+      } else {
+        alert("FAILED")
+      }
+    })
+  }
+
+  const canSubmit = () => {
+    return (newExpenseValid.transactionDate &&
+      newExpenseValid.transactionAmount &&
+      newExpenseValid.vendor &&
+      newExpenseValid.expenseCategory)
+  }
+  
+  const loadExpenseSummary = () => {
+    getExpenseSummary()
+      .then(expenseSummaries => {
+        setExpenseSummary(expenseSummaries)
+      })
   }
 
   return (
@@ -83,11 +123,9 @@ const ExpenseSummaryGrid: React.FC = () => {
                     margin="dense"
                     label="Transaction Date"
                     onChange={(event) => {
-                      if (event.target.value) {
-                        setNewExpense({ ...newExpense, transactionDate: event.target.value })
-                      } else {
-                        setNewExpense({ ...newExpense, transactionDate: "" })
-                      }
+                      var value = event.target.value
+                      setNewExpense({ ...newExpense, transactionDate: value })
+                      setNewExpenseValid({ ...newExpenseValid, transactionDate: validateDate(value) })
                     }}
                   />
                 </Grid>
@@ -97,11 +135,9 @@ const ExpenseSummaryGrid: React.FC = () => {
                     margin="dense"
                     label="Transaction Amount"
                     onChange={(event) => {
-                      if (event.target.value) {
-                        setNewExpense({ ...newExpense, transactionAmount: Number(event.target.value) })
-                      } else {
-                        setNewExpense({ ...newExpense, transactionAmount: 0 })
-                      }
+                      var value = event.target.value
+                      setNewExpense({ ...newExpense, transactionAmount: Number(event.target.value) })
+                      setNewExpenseValid({ ...newExpenseValid, transactionAmount: validateNumber(value) })
                     }}
                   />
                 </Grid>
@@ -116,8 +152,10 @@ const ExpenseSummaryGrid: React.FC = () => {
                   var vendor = value as Vendor | null
                   if (vendor) {
                     setNewExpense({ ...newExpense, vendor: vendor.id })
+                    setNewExpenseValid({ ...newExpenseValid, vendor: true })
                   } else {
                     setNewExpense({ ...newExpense, vendor: "" })
+                    setNewExpenseValid({ ...newExpenseValid, vendor: false })
                   }
                 }}
               />
@@ -131,8 +169,10 @@ const ExpenseSummaryGrid: React.FC = () => {
                   var expenseCategory = value as ExpenseCategory | null
                   if (expenseCategory) {
                     setNewExpense({ ...newExpense, expenseCategory: expenseCategory.id })
+                    setNewExpenseValid({ ...newExpenseValid, expenseCategory: true })
                   } else {
                     setNewExpense({ ...newExpense, expenseCategory: "" })
+                    setNewExpenseValid({ ...newExpenseValid, expenseCategory: false })
                   }
                 }}
               />
@@ -142,11 +182,7 @@ const ExpenseSummaryGrid: React.FC = () => {
                 fullWidth
                 multiline
                 onChange={(event) => {
-                  if (event.target.value) {
-                    setNewExpense({ ...newExpense, notes: event.target.value })
-                  } else {
-                    setNewExpense({ ...newExpense, notes: "" })
-                  }
+                  setNewExpense({ ...newExpense, notes: event.target.value })
                 }}
               />
               <FormControlLabel
@@ -160,13 +196,20 @@ const ExpenseSummaryGrid: React.FC = () => {
               />
             </DialogContent>
             <DialogActions>
+              {
+                isBusy && <CircularProgress size={20} />
+              }
               <Button
                 onClick={() => {
-                  console.log(newExpense)
-                  postExpense(newExpense)
-                  setAddNewExpenseSummaryDialog(false)
+                  if (canSubmit()) {
+                    handleNewExpenseSubmit() 
+                  } else {
+                    alert("check ur inputs")
+                  }
                 }}
                 color="primary"
+                variant="contained"
+                disabled={isBusy}
               >
                 Submit
               </Button>
