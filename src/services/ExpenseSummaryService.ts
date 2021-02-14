@@ -25,18 +25,18 @@ export async function getExpenseSummary(): Promise<ExpenseSummary[]> {
   })
 }
 
-export async function postExpense(newExpense: Expense): Promise<boolean> {
+export async function postExpense(newExpense: Expense): Promise<string> {
   return await axios({
     method: 'post',
     url: 'http://localhost:9000/expense',
     data: newExpense
   }).then(response => {
     if (response.status === 201) {
-      return true
+      return response.data.id
     }
-    return false
+    return ""
   }).catch(response => {
     console.log(response)
-    return false
+    return ""
   })
 }

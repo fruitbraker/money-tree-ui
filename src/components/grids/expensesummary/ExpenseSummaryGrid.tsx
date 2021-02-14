@@ -32,12 +32,14 @@ const ExpenseSummaryGrid: React.FC = () => {
   const [isBusy, setIsBusy] = useState<boolean>(false)
 
   const [addNewExpenseSummaryDialog, setAddNewExpenseSummaryDialog] = useState<boolean>(false)
-  const [newExpense, setNewExpense] = useState<Expense>({
+  const [newExpense, setNewExpense] = useState<ExpenseSummary>({
     id: undefined,
     transactionDate: "",
     transactionAmount: 0.00,
-    vendor: "",
-    expenseCategory: "",
+    vendorId: "",
+    vendorName: "",
+    expenseCategoryId: "",
+    expenseCategoryName: "",
     notes: "",
     hide: false
   })
@@ -47,9 +49,13 @@ const ExpenseSummaryGrid: React.FC = () => {
     vendor: false,
     expenseCategory: false
   })
+  const [showTextFieldError, setShowTextFieldError] = useState<boolean>(false)
 
   useEffect(() => {
-    loadExpenseSummary()
+    getExpenseSummary()
+      .then(expenseSummaries => {
+        setExpenseSummary(expenseSummaries)
+      })
     getVendor()
       .then(vendors => {
         setVendor(vendors)
@@ -69,13 +75,37 @@ const ExpenseSummaryGrid: React.FC = () => {
 
   const handleNewExpenseSubmit = async () => {
     setIsBusy(true)
-    postExpense(newExpense).then((result) => {
+    postExpense({
+      transactionDate: newExpense.transactionDate,
+      transactionAmount: newExpense.transactionAmount,
+      vendor: newExpense.vendorId,
+      expenseCategory: newExpense.expenseCategoryId,
+      notes: newExpense.notes,
+      hide: newExpense.hide
+    } as Expense).then((result) => {
       if (result) {
-        loadExpenseSummary()
-        setAddNewExpenseSummaryDialog(false)
         setIsBusy(false)
-        console.log("success")
+        setExpenseSummary(
+          [
+            { ...newExpense, id: result }, 
+            ...expenseSummary
+          ]
+        )
+        setShowTextFieldError(false)
+        setNewExpense({
+          id: undefined,
+          transactionDate: "",
+          transactionAmount: 0.00,
+          vendorId: "",
+          vendorName: "",
+          expenseCategoryId: "",
+          expenseCategoryName: "",
+          notes: "",
+          hide: false
+        })
+        setAddNewExpenseSummaryDialog(false)
       } else {
+        setIsBusy(false)
         alert("FAILED")
       }
     })
@@ -86,13 +116,6 @@ const ExpenseSummaryGrid: React.FC = () => {
       newExpenseValid.transactionAmount &&
       newExpenseValid.vendor &&
       newExpenseValid.expenseCategory)
-  }
-  
-  const loadExpenseSummary = () => {
-    getExpenseSummary()
-      .then(expenseSummaries => {
-        setExpenseSummary(expenseSummaries)
-      })
   }
 
   return (
@@ -122,11 +145,13 @@ const ExpenseSummaryGrid: React.FC = () => {
                     placeholder="YYYY-MM-DD"
                     margin="dense"
                     label="Transaction Date"
+                    value={newExpense.transactionDate}
                     onChange={(event) => {
                       var value = event.target.value
                       setNewExpense({ ...newExpense, transactionDate: value })
                       setNewExpenseValid({ ...newExpenseValid, transactionDate: validateDate(value) })
                     }}
+                    error={showTextFieldError && !newExpenseValid.transactionDate}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -134,11 +159,13 @@ const ExpenseSummaryGrid: React.FC = () => {
                     required
                     margin="dense"
                     label="Transaction Amount"
+                    value={newExpense.transactionAmount}
                     onChange={(event) => {
                       var value = event.target.value
                       setNewExpense({ ...newExpense, transactionAmount: Number(event.target.value) })
                       setNewExpenseValid({ ...newExpenseValid, transactionAmount: validateNumber(value) })
                     }}
+                    error={showTextFieldError && !newExpenseValid.transactionAmount}
                   />
                 </Grid>
               </Grid>
@@ -146,15 +173,21 @@ const ExpenseSummaryGrid: React.FC = () => {
                 id="addExpenseAutoCompleteVendor"
                 options={vendor}
                 getOptionLabel={(it) => it.name}
-                renderInput={(params) => <TextField {...params} label="Vendor" margin="dense" />}
-                clearOnEscape
+                renderInput={(params) =>
+                  <TextField {...params}
+                    label="Vendor"
+                    margin="dense"
+                    error={showTextFieldError && !newExpenseValid.vendor}
+                  />
+                }
+                autoSelect
                 onChange={(event, value, reason) => {
                   var vendor = value as Vendor | null
                   if (vendor) {
-                    setNewExpense({ ...newExpense, vendor: vendor.id })
+                    setNewExpense({ ...newExpense, vendorId: vendor.id, vendorName: vendor.name })
                     setNewExpenseValid({ ...newExpenseValid, vendor: true })
                   } else {
-                    setNewExpense({ ...newExpense, vendor: "" })
+                    setNewExpense({ ...newExpense, vendorId: "", vendorName: "" })
                     setNewExpenseValid({ ...newExpenseValid, vendor: false })
                   }
                 }}
@@ -163,15 +196,21 @@ const ExpenseSummaryGrid: React.FC = () => {
                 id="addExpenseAutoCompleteExpenseCategory"
                 options={expenseCategory}
                 getOptionLabel={(it) => it.name}
-                renderInput={(params) => <TextField {...params} label="Expense Category" margin="dense" />}
-                clearOnEscape
+                renderInput={(params) =>
+                  <TextField {...params}
+                    label="Expense Category"
+                    margin="dense"
+                    error={showTextFieldError && !newExpenseValid.expenseCategory}
+                  />
+                }
+                autoSelect
                 onChange={(event, value, reason) => {
                   var expenseCategory = value as ExpenseCategory | null
                   if (expenseCategory) {
-                    setNewExpense({ ...newExpense, expenseCategory: expenseCategory.id })
+                    setNewExpense({ ...newExpense, expenseCategoryId: expenseCategory.id, expenseCategoryName: expenseCategory.name })
                     setNewExpenseValid({ ...newExpenseValid, expenseCategory: true })
                   } else {
-                    setNewExpense({ ...newExpense, expenseCategory: "" })
+                    setNewExpense({ ...newExpense, expenseCategoryId: "", expenseCategoryName: "" })
                     setNewExpenseValid({ ...newExpenseValid, expenseCategory: false })
                   }
                 }}
@@ -181,6 +220,7 @@ const ExpenseSummaryGrid: React.FC = () => {
                 label="Notes"
                 fullWidth
                 multiline
+                value={newExpense.notes}
                 onChange={(event) => {
                   setNewExpense({ ...newExpense, notes: event.target.value })
                 }}
@@ -190,6 +230,7 @@ const ExpenseSummaryGrid: React.FC = () => {
                 control={<Checkbox color="primary" />}
                 label="Hide"
                 labelPlacement="end"
+                checked={newExpense.hide}
                 onChange={(event: any) => {
                   setNewExpense({ ...newExpense, hide: event.target.checked })
                 }}
@@ -202,9 +243,9 @@ const ExpenseSummaryGrid: React.FC = () => {
               <Button
                 onClick={() => {
                   if (canSubmit()) {
-                    handleNewExpenseSubmit() 
+                    handleNewExpenseSubmit()
                   } else {
-                    alert("check ur inputs")
+                    setShowTextFieldError(true)
                   }
                 }}
                 color="primary"
