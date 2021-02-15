@@ -35,7 +35,7 @@ const ExpenseSummaryGrid: React.FC = () => {
   const [newExpense, setNewExpense] = useState<ExpenseSummary>({
     id: undefined,
     transactionDate: "",
-    transactionAmount: 0.00,
+    transactionAmount: NaN,
     vendorId: "",
     vendorName: "",
     expenseCategoryId: "",
@@ -95,7 +95,7 @@ const ExpenseSummaryGrid: React.FC = () => {
         setNewExpense({
           id: undefined,
           transactionDate: "",
-          transactionAmount: 0.00,
+          transactionAmount: NaN,
           vendorId: "",
           vendorName: "",
           expenseCategoryId: "",
@@ -145,7 +145,6 @@ const ExpenseSummaryGrid: React.FC = () => {
                     placeholder="YYYY-MM-DD"
                     margin="dense"
                     label="Transaction Date"
-                    value={newExpense.transactionDate}
                     onChange={(event) => {
                       var value = event.target.value
                       setNewExpense({ ...newExpense, transactionDate: value })
@@ -159,10 +158,9 @@ const ExpenseSummaryGrid: React.FC = () => {
                     required
                     margin="dense"
                     label="Transaction Amount"
-                    value={newExpense.transactionAmount}
                     onChange={(event) => {
                       var value = event.target.value
-                      setNewExpense({ ...newExpense, transactionAmount: Number(event.target.value) })
+                      setNewExpense({ ...newExpense, transactionAmount: Number(value) })
                       setNewExpenseValid({ ...newExpenseValid, transactionAmount: validateNumber(value) })
                     }}
                     error={showTextFieldError && !newExpenseValid.transactionAmount}
@@ -206,7 +204,7 @@ const ExpenseSummaryGrid: React.FC = () => {
                 autoSelect
                 onChange={(event, value, reason) => {
                   var expenseCategory = value as ExpenseCategory | null
-                  if (expenseCategory) {
+                  if (expenseCategory && expenseCategory.id) {
                     setNewExpense({ ...newExpense, expenseCategoryId: expenseCategory.id, expenseCategoryName: expenseCategory.name })
                     setNewExpenseValid({ ...newExpenseValid, expenseCategory: true })
                   } else {
@@ -220,7 +218,6 @@ const ExpenseSummaryGrid: React.FC = () => {
                 label="Notes"
                 fullWidth
                 multiline
-                value={newExpense.notes}
                 onChange={(event) => {
                   setNewExpense({ ...newExpense, notes: event.target.value })
                 }}
@@ -230,7 +227,6 @@ const ExpenseSummaryGrid: React.FC = () => {
                 control={<Checkbox color="primary" />}
                 label="Hide"
                 labelPlacement="end"
-                checked={newExpense.hide}
                 onChange={(event: any) => {
                   setNewExpense({ ...newExpense, hide: event.target.checked })
                 }}

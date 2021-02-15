@@ -1,10 +1,10 @@
 export interface ExpenseCategory {
-  id: string,
+  id: string | undefined,
   name: string,
   targetAmount: number
 }
 
 export interface IncomeCategory {
-  id: string,
+  id: string | undefined,
   name: string
 }
