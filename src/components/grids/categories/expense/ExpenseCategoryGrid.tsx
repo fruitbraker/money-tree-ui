@@ -101,6 +101,7 @@ const ExpenseCategoryGrid: React.FC = () => {
             <DialogTitle id="form-dialog-title">Add new expense category</DialogTitle>
             <DialogContent>
               <TextField
+                autoFocus
                 required
                 margin="dense"
                 label="Name"

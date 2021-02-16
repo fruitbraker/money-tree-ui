@@ -89,7 +89,7 @@ const ExpenseSummaryGrid: React.FC = () => {
         setShowSnackbarSuccess(true)
         setExpenseSummary(
           [
-            { ...newExpense, id: result }, 
+            { ...newExpense, id: result },
             ...expenseSummary
           ]
         )
@@ -143,6 +143,7 @@ const ExpenseSummaryGrid: React.FC = () => {
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
                   <TextField
+                    autoFocus
                     required
                     placeholder="YYYY-MM-DD"
                     margin="dense"
@@ -183,7 +184,7 @@ const ExpenseSummaryGrid: React.FC = () => {
                 autoSelect
                 onChange={(event, value, reason) => {
                   var vendor = value as Vendor | null
-                  if (vendor) {
+                  if (vendor && vendor.id) {
                     setNewExpense({ ...newExpense, vendorId: vendor.id, vendorName: vendor.name })
                     setNewExpenseValid({ ...newExpenseValid, vendor: true })
                   } else {
@@ -279,18 +280,18 @@ const ExpenseSummaryGrid: React.FC = () => {
             </Button>
           </div>
           <Snackbar
-              open={showSnackbarSuccess}
+            open={showSnackbarSuccess}
+            onClose={() => { setShowSnackbarSuccess(false) }}
+            autoHideDuration={4000}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert
               onClose={() => { setShowSnackbarSuccess(false) }}
-              autoHideDuration={4000}
-              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              severity="success"
             >
-              <Alert
-                onClose={() => { setShowSnackbarSuccess(false) }}
-                severity="success"
-              >
-                Success
+              Success
             </Alert>
-            </Snackbar>
+          </Snackbar>
         </div>
       }
     </div>

@@ -1,5 +1,5 @@
 interface Vendor {
-  id: string,
+  id: string | undefined,
   name: string
 }
 
