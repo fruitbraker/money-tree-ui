@@ -9,8 +9,6 @@ import { getExpenseCategory, postExpenseCategory } from "../../../../services/Ca
 import { ExpenseCategoryColumnDefinitions, ExpenseCategoryDefaultColumnDefinitions } from "./ExpenseCategoryColumnDefinitions";
 import { ExpenseCategory } from "../../../../domain/entities/Category";
 import { validateNumber, validateString } from "../../../../domain/Validator";
-import { TramRounded } from "@material-ui/icons";
-
 
 const ExpenseCategoryGrid: React.FC = () => {
   let columnApi: ColumnApi

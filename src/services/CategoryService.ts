@@ -54,11 +54,11 @@ export async function getIncomeCategory(): Promise<IncomeCategory[]> {
   })
 }
 
-export async function postIncomeCategory(): Promise<string> {
+export async function postIncomeCategory(newIncomeCategory: IncomeCategory): Promise<string> {
     return await axios({
-        method: 'get',
+        method: 'post',
         url: 'http://localhost:9000/category/income',
-        responseType: "json"
+        data: newIncomeCategory
     }).then(response => {
       if (response.status === 201) {
           return response.data.id
