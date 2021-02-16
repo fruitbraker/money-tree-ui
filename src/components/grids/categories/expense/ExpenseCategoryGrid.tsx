@@ -3,12 +3,13 @@ import { AgGridReact } from "ag-grid-react"
 import React, { useEffect, useState } from "react"
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@material-ui/core"
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, TextField } from "@material-ui/core"
 import AddIcon from '@material-ui/icons/Add';
 import { getExpenseCategory, postExpenseCategory } from "../../../../services/CategoryService";
 import { ExpenseCategoryColumnDefinitions, ExpenseCategoryDefaultColumnDefinitions } from "./ExpenseCategoryColumnDefinitions";
 import { ExpenseCategory } from "../../../../domain/entities/Category";
 import { validateNumber, validateString } from "../../../../domain/Validator";
+import { Alert } from "@material-ui/lab";
 
 const ExpenseCategoryGrid: React.FC = () => {
   let columnApi: ColumnApi
@@ -33,6 +34,7 @@ const ExpenseCategoryGrid: React.FC = () => {
     targetAmount: false
   })
   const [showTextFieldError, setShowTextFieldError] = useState<boolean>(false)
+  const [showSnackbarSuccess, setShowSnackbarSuccess] = useState<boolean>(false)
 
   useEffect(() => {
     getExpenseCategory()
@@ -53,6 +55,7 @@ const ExpenseCategoryGrid: React.FC = () => {
     postExpenseCategory(newExpenseCategory).then((result) => {
       if (result) {
         setIsBusy(false)
+        setShowSnackbarSuccess(true)
         setExpenseCategory(
           [
             { ...newExpenseCategory, id: result },
@@ -80,9 +83,9 @@ const ExpenseCategoryGrid: React.FC = () => {
   return (
     <div>
       {
-        isLoading && 
+        isLoading &&
         <div
-          style={{textAlign: "center"}}
+          style={{ textAlign: "center" }}
         >
           <CircularProgress />
         </div>
@@ -157,7 +160,7 @@ const ExpenseCategoryGrid: React.FC = () => {
           <div style={{
             paddingTop: 10,
             textAlign: "right"
-          }}>  
+          }}>
             <Button
               variant="contained"
               color="primary"
@@ -166,6 +169,19 @@ const ExpenseCategoryGrid: React.FC = () => {
             >
               ADD NEW
             </Button>
+            <Snackbar
+              open={showSnackbarSuccess}
+              onClose={() => { setShowSnackbarSuccess(false) }}
+              autoHideDuration={4000}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <Alert
+                onClose={() => { setShowSnackbarSuccess(false) }}
+                severity="success"
+              >
+                Success
+            </Alert>
+            </Snackbar>
           </div>
         </div>
       }

@@ -3,12 +3,13 @@ import { AgGridReact } from "ag-grid-react"
 import React, { useEffect, useState } from "react"
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@material-ui/core"
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, TextField } from "@material-ui/core"
 import AddIcon from '@material-ui/icons/Add';
 import { getIncomeCategory, postIncomeCategory } from "../../../../services/CategoryService";
 import { IncomeCategoryColumnDefinitions, IncomeCategoryDefaultColumnDefinition } from "./IncomeCategoryColumnDefinitions";
 import { IncomeCategory } from "../../../../domain/entities/Category";
 import { validateString } from "../../../../domain/Validator";
+import { Alert } from "@material-ui/lab";
 
 
 const IncomeCategoryGrid: React.FC = () => {
@@ -31,6 +32,7 @@ const IncomeCategoryGrid: React.FC = () => {
     name: false
   })
   const [showTextFieldError, setShowTextFieldError] = useState<boolean>(false)
+  const [showSnackbarSuccess, setShowSnackbarSuccess] = useState<boolean>(false)
 
   useEffect(() => {
     getIncomeCategory()
@@ -51,6 +53,7 @@ const IncomeCategoryGrid: React.FC = () => {
     postIncomeCategory(newIncomeCategory).then((result) => {
       if (result) {
         setIsBusy(false)
+        setShowSnackbarSuccess(true)
         setIncomeCategory(
           [
             { ...newIncomeCategory, id: result },
@@ -151,6 +154,19 @@ const IncomeCategoryGrid: React.FC = () => {
               ADD NEW
             </Button>
           </div>
+          <Snackbar
+            open={showSnackbarSuccess}
+            onClose={() => { setShowSnackbarSuccess(false) }}
+            autoHideDuration={4000}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert 
+              onClose={() => { setShowSnackbarSuccess(false) }} 
+              severity="success"
+            >
+              Success
+            </Alert>
+          </Snackbar>
         </div>
       }
     </div>

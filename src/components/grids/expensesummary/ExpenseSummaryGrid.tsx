@@ -6,11 +6,11 @@ import { getExpenseSummary, postExpense } from "../../../services/ExpenseSummary
 import { ExpenseSummaryDefaultColumnDefinition, ExpenseSummaryColumnDefinitions } from "./ExpenseSummaryColumnDefinitions"
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import { Button, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, TextField } from "@material-ui/core"
+import { Button, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, Snackbar, TextField } from "@material-ui/core"
 import AddIcon from '@material-ui/icons/Add';
 import Vendor from "../../../domain/entities/Vendor"
 import { getVendor } from "../../../services/VendorService"
-import { Autocomplete } from "@material-ui/lab"
+import { Alert, Autocomplete } from "@material-ui/lab"
 import { ExpenseCategory } from "../../../domain/entities/Category"
 import { getExpenseCategory } from "../../../services/CategoryService"
 import { validateDate, validateNumber } from "../../../domain/Validator"
@@ -50,6 +50,7 @@ const ExpenseSummaryGrid: React.FC = () => {
     expenseCategory: false
   })
   const [showTextFieldError, setShowTextFieldError] = useState<boolean>(false)
+  const [showSnackbarSuccess, setShowSnackbarSuccess] = useState<boolean>(false)
 
   useEffect(() => {
     getExpenseSummary()
@@ -85,6 +86,7 @@ const ExpenseSummaryGrid: React.FC = () => {
     } as Expense).then((result) => {
       if (result) {
         setIsBusy(false)
+        setShowSnackbarSuccess(true)
         setExpenseSummary(
           [
             { ...newExpense, id: result }, 
@@ -276,6 +278,19 @@ const ExpenseSummaryGrid: React.FC = () => {
               ADD NEW
             </Button>
           </div>
+          <Snackbar
+              open={showSnackbarSuccess}
+              onClose={() => { setShowSnackbarSuccess(false) }}
+              autoHideDuration={4000}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <Alert
+                onClose={() => { setShowSnackbarSuccess(false) }}
+                severity="success"
+              >
+                Success
+            </Alert>
+            </Snackbar>
         </div>
       }
     </div>
